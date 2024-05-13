@@ -10,6 +10,7 @@ export default function Home() {
   const [jsonItemInfo, setJsonItemInfo] = useState<any[]>([]);
   const [imageNotfound, setImageNotFound] = useState<any[]>([])
   const [page, setPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
   //const [imageErrors, setImageErrors] = useState(Array(jsonItemInfo.length).fill(false));
   
   const getItemInfo = async () => {
@@ -28,20 +29,31 @@ export default function Home() {
   useEffect(() => {
     getItemInfo();
   }, []);
-  
+
+  const onPageChange = ({selected}: { selected: number }): void => {
+    //console.log(nextCursor);
+    //console.log(selected)
+    checkImage(((selected-1) * 100) +1, (selected) *100)
+    setCurrentPage(selected)
+  }
+
   const checkImage = async (first:number,last:number) => {
-    setImageNotFound([])
+    imageNotfound.length = 0
+    setImageNotFound([...imageNotfound])
     for(let i = first-1; i < last; i++){
       try{
         const img = await axios.get(
           `${ROP2E_COLLECTION_IMG_URL}/${jsonItemInfo[i].id}.png`
         );
+        //console.log(img)
       }catch (error) {
-        if(imageNotfound.find(x=>x.itemid == jsonItemInfo[i].id)){
+        if(imageNotfound.find(x=>x.itemid == jsonItemInfo[i]?.id)){
 
         }else{
-          imageNotfound.push({'itemid': jsonItemInfo[i].id, 'itemname': jsonItemInfo[i].name})
-          setImageNotFound([...imageNotfound])
+          if(jsonItemInfo[i]?.id != undefined){
+            imageNotfound.push({'itemid': jsonItemInfo[i]?.id, 'itemname': jsonItemInfo[i]?.name})
+            setImageNotFound([...imageNotfound])
+          }  
         }    
         //console.error("Error fetching data:", error);
       }
@@ -60,36 +72,39 @@ export default function Home() {
         <div className="flex ml-20 mt-[-30px]">
              <div className="title">CDN Image Check List</div>  
         </div>
-        <div className="flex flex-wrap w-screen px-10 gap-2 pt-5">
-        {Array.from(
-            { length: page },
-            (_, i) => 
-          <div className="text-[14px]" key={i}>
-            <button className="bg-red-400 p-2 rounded-lg" onClick={()=>checkImage((i*500)+1, (i+1) *500)}>
-              {(i*500) + 1}-{(i+1) *500}
-            </button>
+        <div className="ml-10 mt-10">
+          <div className="flex flex-wrap gap-2">
+            {imageNotfound.map((item:any, key:number)=>(
+              <>
+                <div className="w-[170px] h-[170px] bg-slate-100 relative">
+                <div className="text-[#000] p-2">
+                    #{item.itemid}
+                  </div> 
+                  <div className="text-[#000] p-2">
+                    {item.itemname}
+                  </div>    
+                  <div className="absolute bottom-3 left-[50px] text-[#000] w-[70px] h-[30px] bg-yellow-500 rounded-md">
+                    <button className="ml-2">Upload</button>
+                  </div> 
+                </div>
+                
+              </>
+            ))}
           </div>
-          )}
-        </div>
-        <div className="flex flex-wrap justify-center px-10 pt-5">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {imageNotfound.map((item:any, key:number)=>(
-              <tr key={key}>
-                <td>{item.itemid}</td>
-                <td>{item.itemname}</td>
-              </tr>
-              ))}
-            </tbody>  
-          </table>
-          
-        </div>        
+          <div className="mt-4 h-[60px]">
+            <ReactPaginate
+              pageCount={jsonItemInfo.length/100}
+              forcePage={currentPage}
+              className="flex justify-center gap-2"
+              nextClassName={'paginate-button'}
+              previousClassName={'paginate-button'}
+              pageLinkClassName={`page-button`}
+              activeClassName={`paginate-active`}
+              activeLinkClassName={`paginate-active`}
+              onPageChange={onPageChange}
+            />
+          </div>
+        </div> 
       </div>
       
       <div className="">
