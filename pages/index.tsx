@@ -74,10 +74,16 @@ export default function Home() {
         </div>
         <div className="ml-10 mt-10">
           <div className="flex flex-wrap gap-2">
+            {imageNotfound.length == 0 ? 
+            <div className="ml-[50px]">
+              No Items Without pictures
+            </div>
+            : 
+            ""}
             {imageNotfound.map((item:any, key:number)=>(
               <>
                 <div className="w-[170px] h-[170px] bg-slate-100 relative">
-                <div className="text-[#000] p-2">
+                  <div className="text-[#000] p-2"> 
                     #{item.itemid}
                   </div> 
                   <div className="text-[#000] p-2">
@@ -86,8 +92,7 @@ export default function Home() {
                   <div className="absolute bottom-3 left-[50px] text-[#000] w-[70px] h-[30px] bg-yellow-500 rounded-md">
                     <button className="ml-2">Upload</button>
                   </div> 
-                </div>
-                
+                </div>  
               </>
             ))}
           </div>
