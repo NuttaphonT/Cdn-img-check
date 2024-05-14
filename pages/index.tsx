@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ROP2E_COLLECTION_IMG_URL, ROP2E_ITEM_IMG_URL } from "@/constants";
 import ReactPaginate from "react-paginate";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Loader from "@/components/Loader";
 
 export default function Home() {
 
   const [jsonItemInfo, setJsonItemInfo] = useState<any[]>([]);
-  const [imageNotfound, setImageNotFound] = useState<any[]>([])
+  const [imageNotfound, setImageNotFound] = useState<any[]>([...jsonItemInfo.slice(0,100)])
   const [page, setPage] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
-  //const [imageErrors, setImageErrors] = useState(Array(jsonItemInfo.length).fill(false));
+  const [hasMore, setHasMore] = useState(true);
+  const [itemPerpage, setItemPerPage] = useState(100)
+  const [imageErrors, setImageErrors] = useState(Array(jsonItemInfo.length).fill(false));
   
   const getItemInfo = async () => {
     try {
@@ -19,6 +23,7 @@ export default function Home() {
         "https://cdn.maxion.gg/landverse/web/iteminfo.min.json"
       );
       setJsonItemInfo(res.data);
+      setImageNotFound([...jsonItemInfo.slice(0,100)])
       setPage(Math.ceil(res.data.length/500))
       
     } catch (error) {
@@ -28,7 +33,8 @@ export default function Home() {
 
   useEffect(() => {
     getItemInfo();
-  }, []);
+    //checkImage(0,100)
+  }, [jsonItemInfo.length]);
 
   const onPageChange = ({selected}: { selected: number }): void => {
     //console.log(nextCursor);
@@ -38,9 +44,7 @@ export default function Home() {
   }
 
   const checkImage = async (first:number,last:number) => {
-    imageNotfound.length = 0
-    setImageNotFound([...imageNotfound])
-    for(let i = first-1; i < last; i++){
+    for(let i = 0; i < jsonItemInfo.length; i++){
       try{
         const img = await axios.get(
           `${ROP2E_COLLECTION_IMG_URL}/${jsonItemInfo[i].id}.png`
@@ -60,6 +64,10 @@ export default function Home() {
       //console.log(res.data[i])
     }  
   }
+  const fetchMoreData = () => {
+    //console.log(imageNotfound.length)
+    setImageNotFound([...jsonItemInfo.slice(0, imageNotfound.length + itemPerpage)])
+  };
 
   return (
     <main
@@ -80,34 +88,51 @@ export default function Home() {
             </div>
             : 
             ""}
-            {imageNotfound.map((item:any, key:number)=>(
-              <>
-                <div className="w-[170px] h-[170px] bg-slate-100 relative">
-                  <div className="text-[#000] p-2"> 
-                    #{item.itemid}
-                  </div> 
-                  <div className="text-[#000] p-2">
-                    {item.itemname}
-                  </div>    
-                  <div className="absolute bottom-3 left-[50px] text-[#000] w-[70px] h-[30px] bg-yellow-500 rounded-md">
-                    <button className="ml-2">Upload</button>
-                  </div> 
-                </div>  
-              </>
-            ))}
-          </div>
-          <div className="mt-4 h-[60px]">
-            <ReactPaginate
-              pageCount={jsonItemInfo.length/100}
-              forcePage={currentPage}
-              className="flex justify-center gap-2"
-              nextClassName={'paginate-button'}
-              previousClassName={'paginate-button'}
-              pageLinkClassName={`page-button`}
-              activeClassName={`paginate-active`}
-              activeLinkClassName={`paginate-active`}
-              onPageChange={onPageChange}
-            />
+            <InfiniteScroll
+              dataLength={imageNotfound.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<Loader />}
+            >
+              <div className='container'>
+                <div className='flex flex-wrap gap-2'>
+                  {imageNotfound &&
+                    imageNotfound.map((item, index) => 
+                    <>  
+                        <div className={`w-[180px] h-[170px] ${imageErrors[index] ? "bg-red-400" : "bg-slate-400"} relative`}>
+                          <div className="text-[#000] p-2"> 
+                            #{item.id}
+                          </div> 
+                          <div className="text-[#000] p-1">
+                            {item.name}
+                          </div>    
+                          <div className="absolute bottom-15 left-[50px] text-[#000] w-[70px] h-[30px]  rounded-md">
+                          {!imageErrors[index] ?
+                          <Image
+                            src={`${
+                              !imageErrors[index]
+                                ? `${ROP2E_COLLECTION_IMG_URL}/${item.id}.png`
+                                : "/images/roverse/not-found.jpg"
+                            }`}
+                            alt="img"
+                            width={50}
+                            height={30}
+                            onError={() => {
+                              const updatedErrors = [...imageErrors];
+                              updatedErrors[index] = true;
+                              setImageErrors(updatedErrors);
+                            }}
+                          />
+                          :
+                          ""
+                          }
+                          </div> 
+                        </div>                       
+                    </>
+                )}
+                </div>
+              </div>
+            </InfiniteScroll>
           </div>
         </div> 
       </div>
