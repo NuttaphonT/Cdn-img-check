@@ -64,9 +64,9 @@ export default function Home() {
       //console.log(res.data[i])
     }  
   }
-  const fetchMoreData = () => {
+  const fetchMoreData = async () => {
     //console.log(imageNotfound.length)
-    setImageNotFound([...jsonItemInfo.slice(0, imageNotfound.length + itemPerpage)])
+    await setImageNotFound([...jsonItemInfo.slice(0, imageNotfound.length + itemPerpage)])
   };
 
   return (
@@ -100,7 +100,7 @@ export default function Home() {
                     imageNotfound.map((item, index) => 
                     <>  
                         <div className={`w-[180px] h-[170px] ${imageErrors[index] ? "bg-red-400" : "bg-slate-400"} relative`}>
-                          <div className="text-[#000] p-2"> 
+                          <div className={`text-[#000] p-2 `}> 
                             #{item.id}
                           </div> 
                           <div className="text-[#000] p-1">
