@@ -5,7 +5,7 @@ export default function Loader() {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Bars
-        height='80'
+        height='70'
         width='80'
         color='#4fa94d'
         ariaLabel='bars-loading'
