@@ -11,6 +11,7 @@ export default function Home() {
 
   const [jsonItemInfo, setJsonItemInfo] = useState<any[]>([]);
   const [imageNotfound, setImageNotFound] = useState<any[]>([...jsonItemInfo.slice(0,100)])
+  const [errorImage, setErrorImage] = useState<any[]>([])
   const [page, setPage] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
   const [hasMore, setHasMore] = useState(true);
@@ -23,7 +24,7 @@ export default function Home() {
         "https://cdn.maxion.gg/landverse/web/iteminfo.min.json"
       );
       setJsonItemInfo(res.data);
-      setImageNotFound([...jsonItemInfo.slice(0,100)])
+      setImageNotFound([...jsonItemInfo.slice(0,res.data.length)])
       setPage(Math.ceil(res.data.length/500))
       
     } catch (error) {
@@ -64,6 +65,21 @@ export default function Home() {
       //console.log(res.data[i])
     }  
   }
+
+  const pushImageErrorList = (index:number) => {
+    //console.log("A")
+    console.log(imageNotfound[index])
+    
+    if(errorImage.find(item=>item.id == imageNotfound[index].id)){
+
+    }else{
+      errorImage.push(imageNotfound[index])
+      setErrorImage([...errorImage])
+      imageNotfound.splice(index,1)
+  }
+    }
+    
+
   const fetchMoreData = async () => {
     //console.log(imageNotfound.length)
     await setImageNotFound([...jsonItemInfo.slice(0, imageNotfound.length + itemPerpage)])
@@ -88,18 +104,18 @@ export default function Home() {
             </div>
             : 
             ""}
-            <InfiniteScroll
+            {/*<InfiniteScroll
               dataLength={imageNotfound.length}
               next={fetchMoreData}
               hasMore={hasMore}
               loader={<Loader />}
-            >
+            >*/}
               <div className='container'>
-                <div className='flex flex-wrap gap-2'>
+                <div className='invisible flex-wrap gap-2'>
                   {imageNotfound &&
                     imageNotfound.map((item, index) => 
-                    <>  
-                        <div className={`w-[180px] h-[170px] ${imageErrors[index] ? "bg-red-400" : "bg-slate-400"} relative`}>
+                    <div key={index}>  
+                        <div className={`w-[0px] h-[0px] ${imageErrors[index] ? "bg-red-400" : "bg-slate-400"} relative`}>
                           <div className={`text-[#000] p-2 `}> 
                             #{item.id}
                           </div> 
@@ -115,12 +131,13 @@ export default function Home() {
                                 : "/images/roverse/not-found.jpg"
                             }`}
                             alt="img"
-                            width={50}
-                            height={30}
+                            width={1}
+                            height={1}
                             onError={() => {
                               const updatedErrors = [...imageErrors];
                               updatedErrors[index] = true;
                               setImageErrors(updatedErrors);
+                              pushImageErrorList(index);
                             }}
                           />
                           :
@@ -128,11 +145,49 @@ export default function Home() {
                           }
                           </div> 
                         </div>                       
-                    </>
+                    </div>
+                )}
+                </div>
+                <Loader/>
+                <div className='flex flex-wrap gap-2'>
+                  {errorImage &&
+                    errorImage.map((item, index) => 
+                    <div key={index}>  
+                        <div className={`w-[180px] h-[170px] ${errorImage[index] ? "bg-red-400" : "bg-slate-400"} relative`}>
+                          <div className={`text-[#000] p-2 `}> 
+                            #{item.id}
+                          </div> 
+                          <div className="text-[#000] p-1">
+                            {item.name}
+                          </div>    
+                          <div className="absolute bottom-15 left-[50px] text-[#000] w-[70px] h-[30px]  rounded-md">
+                          {!errorImage[index] ?
+                          <Image
+                            src={`${
+                              !errorImage[index]
+                                ? `${ROP2E_COLLECTION_IMG_URL}/${item.id}.png`
+                                : "/images/roverse/not-found.jpg"
+                            }`}
+                            alt="img"
+                            width={50}
+                            height={30}
+                            onError={() => {
+                              const updatedErrors = [...imageErrors];
+                              updatedErrors[index] = true;
+                              setImageErrors(updatedErrors);
+                              pushImageErrorList(index);
+                            }}
+                          />
+                          :
+                          ""
+                          }
+                          </div> 
+                        </div>                       
+                    </div>
                 )}
                 </div>
               </div>
-            </InfiniteScroll>
+            {/*</InfiniteScroll>*/}
           </div>
         </div> 
       </div>
