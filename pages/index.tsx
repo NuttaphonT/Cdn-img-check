@@ -136,7 +136,7 @@ export default function Home() {
                 <div className="flex flex-wrap">
                 {jsonItemInfo &&
                       jsonItemInfo.map((item, index) => 
-                        <div>
+                        <div key={index}>
                           <CustomImage
                               src={`${ROP2E_COLLECTION_IMG_URL}/${item.id}.png`}  // Invalid or non-existent image URL
                                 alt="Example Image"
