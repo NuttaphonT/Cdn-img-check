@@ -8,7 +8,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "@/components/Loader";
 import CustomImage from "@/components/CustomImage";
 import { useAtom } from "jotai";
-import Link from "next/link";
 
 export default function Home() {
 
@@ -24,11 +23,11 @@ export default function Home() {
   const getItemInfo = async () => {
     try {
       const res = await axios.get(
-        "https://cdn.maxion.gg/landverse/web-th/iteminfo.min.json"
+        "https://cdn.maxion.gg/landverse/web/iteminfo.min.json"
       );
-      setJsonItemInfo([...res.data.filter((item:any)=>item.desc != "" && item.desc != "Can be identified by using a Magnifier.")]);
-      console.log(jsonItemInfo)
-      setPage(Math.ceil(res.data.filter((item:any)=>item.desc != "" && item.desc != "Can be identified by using a Magnifier.").length/500))
+      setJsonItemInfo([...res.data]);
+      //console.log(jsonItemInfo)
+      setPage(Math.ceil(res.data.length/500))
       
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -121,8 +120,8 @@ export default function Home() {
              <div className="title">CDN Image Check List</div>  
         </div>
         <div className="flex ml-20">
-          <button className="w-[250px] h-[40px] mt-4 bg-yellow-300 rounded-lg">
-            <a href="/global">Ragnarok Lanverse Global</a>
+          <button className="w-[250px] h-[40px] mt-4 bg-purple-400 rounded-lg">
+            <a href="/">Ragnarok Lanverse TH</a>
           </button>
         </div>
         <div className="ml-10 mt-10">
