@@ -23,10 +23,10 @@ export default function Home() {
   const getItemInfo = async () => {
     try {
       const res = await axios.get(
-        "https://cdn.maxion.gg/landverse/web/iteminfo.min.json"
+        "https://cdn.maxion.gg/landverse/web-th/iteminfo.min.json"
       );
-      setJsonItemInfo([...res.data]);
-      setPage(Math.ceil(res.data.length/500))
+      setJsonItemInfo([...res.data.filter((item:any)=>item.desc != "")]);
+      setPage(Math.ceil(res.data.filter((item:any)=>item.desc != "").length/500))
       
     } catch (error) {
       console.error("Error fetching data:", error);
