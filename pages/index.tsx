@@ -122,7 +122,7 @@ export default function Home() {
         </div>
         <div className="flex ml-20">
           <button className="w-[250px] h-[40px] mt-4 bg-yellow-300 rounded-lg">
-            <a href="/global">Ragnarok Lanverse Global</a>
+            <Link href="/global">Ragnarok Lanverse Global</Link>
           </button>
         </div>
         <div className="ml-10 mt-10">

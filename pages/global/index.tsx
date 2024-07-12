@@ -8,6 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Loader from "@/components/Loader";
 import CustomImage from "@/components/CustomImage";
 import { useAtom } from "jotai";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -121,7 +122,7 @@ export default function Home() {
         </div>
         <div className="flex ml-20">
           <button className="w-[250px] h-[40px] mt-4 bg-purple-400 rounded-lg">
-            <a href="/">Ragnarok Lanverse TH</a>
+            <Link href="/">Ragnarok Lanverse TH</Link>
           </button>
         </div>
         <div className="ml-10 mt-10">
