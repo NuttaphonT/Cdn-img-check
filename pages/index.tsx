@@ -25,8 +25,9 @@ export default function Home() {
       const res = await axios.get(
         "https://cdn.maxion.gg/landverse/web-th/iteminfo.min.json"
       );
-      setJsonItemInfo([...res.data.filter((item:any)=>item.desc != "")]);
-      setPage(Math.ceil(res.data.filter((item:any)=>item.desc != "").length/500))
+      setJsonItemInfo([...res.data.filter((item:any)=>item.desc != "" && item.desc != "Can be identified by using a Magnifier.")]);
+      console.log(jsonItemInfo)
+      setPage(Math.ceil(res.data.filter((item:any)=>item.desc != "" && item.desc != "Can be identified by using a Magnifier.").length/500))
       
     } catch (error) {
       console.error("Error fetching data:", error);
