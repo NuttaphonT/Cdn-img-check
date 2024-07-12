@@ -118,7 +118,7 @@ export default function Home() {
       </div>
       <div className="w-screen h-[150px]">
         <div className="flex ml-20 mt-[-30px]">
-             <div className="title">CDN Image Check List</div>  
+             <div className="title">CDN Image Ragnarok Landverse Check List</div>  
         </div>
         <div className="flex ml-20">
           <button className="w-[250px] h-[40px] mt-4 bg-purple-400 rounded-lg">
